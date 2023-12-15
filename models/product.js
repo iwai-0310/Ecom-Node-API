@@ -1,10 +1,6 @@
 const mongoose=require('mongoose');
 
 const productSchema=new mongoose.Schema({
-  id:{
-    type:String,
-    required:true,
-  },
   category:{
     type:String,
     required: [true,'product category must be defined']
