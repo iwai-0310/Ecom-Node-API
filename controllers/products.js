@@ -13,7 +13,7 @@ const getAllProducts=async (req,res)=>{
   // console.log(req.query)
 
   //implement a better approach try to destructured the req query
-  const {name,category,seller} =req.query
+  const {name,category,seller,sort,numericFilters} =req.query
   //instead of directly passing it to the find its better to create a new object
   const queryObject={}
   //if name matches the name value in the req query and use regEx for partial matches
@@ -30,9 +30,43 @@ const getAllProducts=async (req,res)=>{
   }
   console.log(queryObject)
   //pass the query directly into mongoose query
-  const products=await Product.find(
-    queryObject
-  )
+  // const products=await Product.find(
+  //   queryObject
+  // )
+
+  //set the numeric filtering
+  if(numericFilters){
+    const operatorMap={
+      '>':"$gt",
+      '>=':"$gte",
+      '<':"$lt",
+      '<=':"$lte",
+      '=':"$eq",
+    }
+    const regEx=/\b(<|>|>=|<=|=)\b/g
+    let filters=numericFilters.replace(regEx,(match)=>`-${operatorMap[match]}-`)
+    console.log(filters)
+    const options=['price','rating'];
+    filters=filters.split(',').forEach((item)=>{
+      const [field,operator,value]= item.split('-')
+      if(options.includes(field)){
+        queryObject[field]={[operator]:Number(value)}
+      }
+    })
+  }
+  console.log(queryObject)
+
+  let result=Product.find(queryObject)
+  //sort
+  if(sort){
+    // console.log(sort);
+    const sortList=sort.split(',').join(' ');
+    result=result.sort(sortList)
+  }
+  else{
+    result=result.sort('createdAt')
+  }
+  const products= await result;
   res.status(200).json({products, ngHits: products.length})
 }
 

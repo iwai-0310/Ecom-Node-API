@@ -21,7 +21,7 @@ const productSchema=new mongoose.Schema({
     type:Number,
     required:[true,'Stock quantity should be provided']
   },
-  rating:{
+  ratings:{
     type:Number,
     default: 4,
   },
