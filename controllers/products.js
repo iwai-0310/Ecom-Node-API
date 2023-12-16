@@ -13,7 +13,7 @@ const getAllProducts=async (req,res)=>{
   // console.log(req.query)
 
   //implement a better approach try to destructured the req query
-  const {name,category,seller,sort,numericFilters} =req.query
+  const {name,category,seller,sort,numericFilters,fields} =req.query
   //instead of directly passing it to the find its better to create a new object
   const queryObject={}
   //if name matches the name value in the req query and use regEx for partial matches
@@ -65,6 +65,10 @@ const getAllProducts=async (req,res)=>{
   }
   else{
     result=result.sort('createdAt')
+  }
+  if(fields){
+    const fieldsList=fields.split(',').join(' ');
+    result=result.select(fieldsList);
   }
   const products= await result;
   res.status(200).json({products, ngHits: products.length})
