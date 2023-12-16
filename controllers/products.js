@@ -13,7 +13,7 @@ const getAllProducts=async (req,res)=>{
   // console.log(req.query)
 
   //implement a better approach try to destructured the req query
-  const {name,category} =req.query
+  const {name,category,seller} =req.query
   //instead of directly passing it to the find its better to create a new object
   const queryObject={}
   //if name matches the name value in the req query and use regEx for partial matches
@@ -23,6 +23,10 @@ const getAllProducts=async (req,res)=>{
   //if category matches with category in the req query and use regEx for partial matches
   if(category){
     queryObject.category={ $regex:category, $options: 'i'}
+  }
+  //if seller matches with category in the req query
+  if(seller){
+    queryObject.seller=seller;
   }
   console.log(queryObject)
   //pass the query directly into mongoose query
