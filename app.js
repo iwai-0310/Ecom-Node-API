@@ -17,6 +17,9 @@ const errorMiddleware=require('./middleware/error-handler');
 
 //middleware
 app.use(express.json());
+
+//cors support
+app.use(cors());
 //routes
 
 app.get("/",(req,res)=>{
