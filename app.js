@@ -6,7 +6,7 @@ require('express-async-errors')
 const express=require('express');
 //instatize express using app
 const app=express();
-
+const cors=require('cors');
 //
 const connectDB=require("./db/connect")
 

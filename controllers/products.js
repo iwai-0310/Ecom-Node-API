@@ -56,12 +56,28 @@ const getAllProducts=async (req,res)=>{
     const regEx=/\b(<|>|>=|<=|=)\b/g
     let filters=numericFilters.replace(regEx,(match)=>`-${operatorMap[match]}-`)
     console.log(filters)
-    const options=['price','rating'];
+    const options=['price','rating','stock','shipping'];
     filters=filters.split(',').forEach((item)=>{
       const [field,operator,value]= item.split('-')
       if(options.includes(field)){
-        queryObject[field]={[operator]:Number(value)}
+        // queryObject[field]={[operator]:Number(value)}
+
+        // Check if it's a range query
+      const isRangeQuery = operator === '$gt' || operator === '$lt';
+      const existingFilter = queryObject[field] || {};
+      if(isRangeQuery){
+        // Handle range queries
+        if (existingFilter['$gte'] === undefined && operator === '$gt') {
+          existingFilter['$gte'] = Number(value);
+        } else if (existingFilter['$lte'] === undefined && operator === '$lt') {
+          existingFilter['$lte'] = Number(value);
+        }
+      }else{
+        // Handle single value queries
+        existingFilter[operator] = Number(value);
       }
+      queryObject[field] = existingFilter;
+    }
     })
   }
   console.log(queryObject)
